@@ -1,0 +1,6 @@
+/* assets/css/main.css */
+
+html, body {
+    font-family: 'Roboto', sans-serif; /* Apply font globally */
+    font-weight: 400;                  /* Set the default weight */
+}

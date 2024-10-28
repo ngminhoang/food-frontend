@@ -8,6 +8,9 @@
     </div>
     <div class="panel">
       Calculate
+      <el-button>
+
+      </el-button>
     </div>
     <div class="panel">
       Analyze Image
@@ -21,6 +24,7 @@
   justify-content: space-between; /* Distributes the panels evenly */
   gap: 20px; /* Space between the panels */
   padding: 20px;
+  height: 40vh;
 }
 
 .panel {
