@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, defineEmits } from 'vue';
 import axios from 'axios';
 
 const weight = ref<number | null>(null);
@@ -9,6 +9,9 @@ const gender = ref<string | null>(null);
 const activityLevel = ref<string | null>(null);
 const errorMessage = ref<string | null>(null);
 
+const emit = defineEmits(['showPopup']);
+
+// API call function
 const callApi = async () => {
   // Validate required fields
   if (weight.value === null || height.value === null || age.value === null || !gender.value || !activityLevel.value) {
@@ -29,6 +32,8 @@ const callApi = async () => {
       },
     });
     console.log('API response:', response.data);
+    emit('showPopup', { response: response.data }); // Emit response data
+
   } catch (error) {
     console.error('API call error:', error);
     errorMessage.value = 'Error calling API. Please try again.';
@@ -38,31 +43,16 @@ const callApi = async () => {
 
 <template>
   <div class="form-container">
-    <el-input
-        v-model.number="weight"
-        type="number"
-        placeholder="Enter weight in kg"
-        aria-required="true"
-    />
-    <el-input
-        v-model.number="height"
-        type="number"
-        placeholder="Enter height in cm"
-        aria-required="true"
-    />
-    <el-input
-        v-model.number="age"
-        type="number"
-        placeholder="Enter age"
-        aria-required="true"
-    />
+    <el-input v-model.number="weight" type="number" placeholder="Enter weight in kg" aria-required="true" />
+    <el-input v-model.number="height" type="number" placeholder="Enter height in cm" aria-required="true" />
+    <el-input v-model.number="age" type="number" placeholder="Enter age" aria-required="true" />
 
     <el-select v-model="gender" placeholder="Select gender" aria-required="true">
       <el-option label="Male" value="male" />
       <el-option label="Female" value="female" />
     </el-select>
 
-    <el-select v-model="activityLevel" placeholder="Select activity level" ria-required="true">
+    <el-select v-model="activityLevel" placeholder="Select activity level" aria-required="true">
       <el-option label="Sedentary" value="sedentary" />
       <el-option label="Lightly Active" value="lightly_active" />
       <el-option label="Moderately Active" value="moderately_active" />
