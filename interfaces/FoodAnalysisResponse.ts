@@ -75,3 +75,5 @@ export interface FoodAnalysisResponse {
     analysis_id: string;
     items: AnalysisItem[];
 }
+
+

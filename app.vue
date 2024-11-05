@@ -26,7 +26,7 @@
 <style scoped>
 /* Header styles */
 .header {
-  background-color: #000000;
+  background-color: #b1527a;
   color: white;
   padding: 20px;
 }
@@ -49,8 +49,8 @@
 
 /* Footer styles */
 .footer {
-  background-color: #2c3e50;
-  color: white;
+
+  color: #b6b6b6;
   text-align: center;
   padding: 10px;
   position: fixed;

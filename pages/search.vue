@@ -22,14 +22,14 @@
       <el-col :span="9" class="right-column">
         <div class="content-display">
           <h3>Clicked Content Display</h3>
-          <p>{{ clickedContent }}</p>
-          <p>calo</p>
-          <p>price</p>
-          <p>protein</p>
-          <p>fat</p>
-          <p>satFat</p>
-          <p>fiber</p>
-          <p>carb</p>
+          <p>Name: {{ clickedContent.name }}</p>
+          <p>Calories: {{ clickedContent.nuCalories }}</p>
+          <p>Price: {{ clickedContent.nuPrice }}</p>
+          <p>Proteins: {{ clickedContent.nuProteins }}</p>
+          <p>Fats: {{ clickedContent.nuFats }}</p>
+          <p>Saturated Fats: {{ clickedContent.nuSatFats }}</p>
+          <p>Fibers: {{ clickedContent.nuFibers }}</p>
+          <p>Carbs: {{ clickedContent.nuCarbs }}</p>
         </div>
       </el-col>
     </el-row>
@@ -41,7 +41,18 @@ import { ref } from 'vue'
 import ScrollPanel from '~/components/search/ScrollPanel.vue'
 import SearchBar from '~/components/search/SearchBar.vue'
 
-const clickedContent = ref('Click an item to display content here.')
+// Initialize clickedContent as an object to store all properties
+const clickedContent = ref({
+  name: '',
+  nuCalories: 0,
+  nuPrice: 0,
+  nuProteins: 0,
+  nuFats: 0,
+  nuSatFats: 0,
+  nuFibers: 0,
+  nuCarbs: 0
+})
+
 const query = ref('') // Store the current query value
 
 const handleQuery = (newQuery) => {
@@ -49,8 +60,17 @@ const handleQuery = (newQuery) => {
 }
 
 const handleClick = (item) => {
-
-  clickedContent.value = `name: ${item.name}`
+  // Update clickedContent with the properties of the clicked item
+  clickedContent.value = {
+    name: item.name || '',
+    nuCalories: item.nuCalories || 0,
+    nuPrice: item.nuPrice || 0,
+    nuProteins: item.nuProteins || 0,
+    nuFats: item.nuFats || 0,
+    nuSatFats: item.nuSatFats || 0,
+    nuFibers: item.nuFibers || 0,
+    nuCarbs: item.nuCarbs || 0
+  }
 }
 </script>
 
