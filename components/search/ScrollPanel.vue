@@ -27,17 +27,26 @@ const page = ref(1)            // Track current page
 const totalPages = ref(null)   // Total number of pages from API
 const loading = ref(false)     // Track loading status to avoid multiple calls
 
-const props = defineProps<{ query: string }>()
+// Define props for query, sort, and order
+const props = defineProps<{ query: string, sort: string, order: string }>()
 
 const query = ref('')
+const sort = ref(props.sort)
+const order = ref(props.order)
 
-watch(() => props.query, newValue => {
-  query.value = newValue
-  items.value = []             // Clear the current items
-  page.value = 1               // Reset to the first page
-  totalPages.value = null      // Reset totalPages
-  load()                       // Load new data based on updated query
-})
+// Watch for changes in query, sort, and order and reload data
+watch(
+    [() => props.query, () => props.sort, () => props.order],
+    ([newQuery, newSort, newOrder]) => {
+      query.value = newQuery
+      sort.value = newSort
+      order.value = newOrder
+      items.value = []             // Clear current items
+      page.value = 1               // Reset to the first page
+      totalPages.value = null      // Reset totalPages
+      load()                       // Load new data based on updated query, sort, or order
+    }
+)
 
 const load = async () => {
   if (loading.value || (totalPages.value && page.value > totalPages.value)) return
@@ -45,8 +54,14 @@ const load = async () => {
   loading.value = true
 
   try {
-    const response = await axios.get('http://localhost:8080/api/ingradient/search', {
-      params: { keyword: query.value, page: page.value, size: 10 },
+    const response = await axios.get('http://localhost:8080/api/ingredient/search', {
+      params: {
+        keyword: query.value,
+        page: page.value,
+        size: 10,
+        sort: sort.value,
+        order: order.value
+      },
     })
     const data = response.data
 

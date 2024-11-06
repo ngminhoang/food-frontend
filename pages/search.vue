@@ -4,33 +4,55 @@
 
     <el-row class="container">
       <!-- Cột trái (Filter) -->
-      <el-col :span="5" class="left-column">
+      <el-col :span="3" class="left-column">
         <div class="filter">
           <h3>Filter Options</h3>
-          <p>Filter content goes here</p>
+          <p>Sort By:</p>
+          <el-radio-group v-model="sortOption" @change="handleSortChange">
+            <el-radio label="calo">Calories</el-radio>
+            <el-radio label="protein">Proteins</el-radio>
+            <el-radio label="fat">Fats</el-radio>
+            <el-radio label="satFat">Saturated Fats</el-radio>
+            <el-radio label="fiber">Fibers</el-radio>
+            <el-radio label="carb">Carbs</el-radio>
+          </el-radio-group>
+          <p>Order:</p>
+          <el-radio-group v-model="orderOption" @change="handleOrderChange">
+            <el-radio label="asc">Ascending</el-radio>
+            <el-radio label="desc">Descending</el-radio>
+          </el-radio-group>
         </div>
       </el-col>
 
       <!-- Cột giữa (Scroll Infinity Loading) -->
-      <el-col :span="10" class="middle-column">
-        <h3>Scrollable Content</h3>
-        <!-- Pass query prop directly to ScrollPanel -->
-        <ScrollPanel :query="query" @clickItem="handleClick" />
+      <el-col :span="13" class="middle-column">
+        <h3>Search Results</h3>
+        <!-- Pass query, sort, and order as props to ScrollPanel -->
+        <ScrollPanel :query="query" :sort="sortOption" :order="orderOption" @clickItem="handleClick" />
       </el-col>
 
       <!-- Cột phải (Hiển thị nội dung khi click vào item) -->
-      <el-col :span="9" class="right-column">
-        <div class="content-display">
-          <h3>Clicked Content Display</h3>
-          <p>Name: {{ clickedContent.name }}</p>
-          <p>Calories: {{ clickedContent.nuCalories }}</p>
-          <p>Price: {{ clickedContent.nuPrice }}</p>
-          <p>Proteins: {{ clickedContent.nuProteins }}</p>
-          <p>Fats: {{ clickedContent.nuFats }}</p>
-          <p>Saturated Fats: {{ clickedContent.nuSatFats }}</p>
-          <p>Fibers: {{ clickedContent.nuFibers }}</p>
-          <p>Carbs: {{ clickedContent.nuCarbs }}</p>
+      <el-col :span="8" class="right-column">
+        <div style="display: flex">
+          <div class="content-display">
+            <h3>Detail Information</h3>
+            <p>Name: {{ clickedContent.name }}</p>
+            <p>Calories: {{ clickedContent.nuCalories }}</p>
+            <p>Price: {{ clickedContent.nuPrice }}</p>
+            <p>Proteins: {{ clickedContent.nuProteins }}</p>
+            <p>Fats: {{ clickedContent.nuFats }}</p>
+            <p>Saturated Fats: {{ clickedContent.nuSatFats }}</p>
+            <p>Fibers: {{ clickedContent.nuFibers }}</p>
+            <p>Carbs: {{ clickedContent.nuCarbs }}</p>
+          </div>
+          <div>
+            <client-only>
+              <NutrientPolarChart :clickedContent="clickedContent" />
+            </client-only>
+          </div>
         </div>
+
+
       </el-col>
     </el-row>
   </client-only>
@@ -40,6 +62,7 @@
 import { ref } from 'vue'
 import ScrollPanel from '~/components/search/ScrollPanel.vue'
 import SearchBar from '~/components/search/SearchBar.vue'
+import NutrientPolarChart from "~/components/search/NutrientPolarChart.vue";
 
 // Initialize clickedContent as an object to store all properties
 const clickedContent = ref({
@@ -53,14 +76,17 @@ const clickedContent = ref({
   nuCarbs: 0
 })
 
-const query = ref('') // Store the current query value
+const query = ref('')           // Store the current query value
+const sortOption = ref('calo') // Default sort option
+const orderOption = ref('asc')   // Default order option
 
+// Update query when received from SearchBar
 const handleQuery = (newQuery) => {
-  query.value = newQuery // Update query when received from SearchBar
+  query.value = newQuery
 }
 
+// Update clickedContent with the properties of the clicked item
 const handleClick = (item) => {
-  // Update clickedContent with the properties of the clicked item
   clickedContent.value = {
     name: item.name || '',
     nuCalories: item.nuCalories || 0,
@@ -72,6 +98,14 @@ const handleClick = (item) => {
     nuCarbs: item.nuCarbs || 0
   }
 }
+
+// Handle changes in sort and order options
+const handleSortChange = () => {
+  query.value = '' // Clear the query to refetch based on new sorting options
+}
+const handleOrderChange = () => {
+  query.value = '' // Clear the query to refetch based on new ordering
+}
 </script>
 
 <style scoped>
@@ -80,7 +114,7 @@ const handleClick = (item) => {
 }
 
 .left-column {
-  background-color: #f5f5f5;
+  background-color: #ffd3d3;
   padding: 20px;
   height: 40vh;
 }
@@ -91,7 +125,7 @@ const handleClick = (item) => {
 }
 
 .right-column {
-  background-color: #f0f0f0;
+  background-color: #ffd3d3;
   padding: 20px;
   height: 40vh;
 }

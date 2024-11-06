@@ -12,5 +12,8 @@ export default defineNuxtConfig({
   // Include global styles here
   css: ['~/assets/css/main.css'],
 
-  compatibilityDate: '2024-10-28'
+  compatibilityDate: '2024-10-28',
+  plugins: [
+    { src: '~/plugins/apexcharts.client.js', mode: 'client' }
+  ]
 });
