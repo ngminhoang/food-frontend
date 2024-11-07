@@ -10,41 +10,35 @@
 
 <script lang="ts" setup>
 import { ref, defineEmits, onMounted } from 'vue'
+import axios from 'axios'
 
 const emit = defineEmits(['query'])
 const state = ref('')
 
 interface LinkItem {
   value: string
-  link: string
 }
 
 const links = ref<LinkItem[]>([])
 
-const loadAll = () => {
-  return [
-    { value: 'vue', link: 'https://github.com/vuejs/vue' },
-    { value: 'element', link: 'https://github.com/ElemeFE/element' },
-    { value: 'cooking', link: 'https://github.com/ElemeFE/cooking' },
-    { value: 'mint-ui', link: 'https://github.com/ElemeFE/mint-ui' },
-    { value: 'vuex', link: 'https://github.com/vuejs/vuex' },
-    { value: 'vue-router', link: 'https://github.com/vuejs/vue-router' },
-    { value: 'babel', link: 'https://github.com/babel/babel' },
-  ]
-}
+const querySearchAsync = async (queryString: string, cb: (arg: any) => void) => {
+  if (!queryString) {
+    cb([])  // If no input, return an empty list
+    return
+  }
 
-const querySearchAsync = (queryString: string, cb: (arg: any) => void) => {
-  const results = queryString
-      ? links.value.filter(createFilter(queryString))
-      : links.value
+  try {
+    // Call the API to fetch suggestions based on the query
+    const response = await axios.get(`http://localhost:8080/api/ingredient/suggest?keyword=${queryString}`)
+    const results: string[] = response.data  // Assuming the API returns a list of strings
 
-  setTimeout(() => {
-    cb(results)
-  }, 300)
-}
-
-const createFilter = (queryString: string) => {
-  return (item: LinkItem) => item.value.toLowerCase().includes(queryString.toLowerCase())
+    // Convert the list of strings to the expected format for the autocomplete
+    const formattedResults = results.map(item => ({ value: item }))
+    cb(formattedResults)
+  } catch (error) {
+    console.error('Error fetching suggestions:', error)
+    cb([])  // Return empty results in case of an error
+  }
 }
 
 const handleSelect = (item: LinkItem) => {
@@ -55,7 +49,4 @@ const emitQuery = () => {
   emit('query', state.value)
 }
 
-onMounted(() => {
-  links.value = loadAll()
-})
 </script>

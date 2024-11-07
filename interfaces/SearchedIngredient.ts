@@ -1,5 +1,5 @@
 
-export interface SearchedIngredient {
+export interface Nutrient {
     id: number;
     name: string;
     nuGrams: number;

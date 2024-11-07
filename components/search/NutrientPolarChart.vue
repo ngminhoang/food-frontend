@@ -6,7 +6,6 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import ApexCharts from 'vue3-apexcharts'
 
 const props = defineProps({
   clickedContent: {

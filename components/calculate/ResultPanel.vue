@@ -1,6 +1,9 @@
 <script lang="ts" setup>
 import {ref, defineModel, defineProps} from 'vue';
 import {ElMessageBox} from 'element-plus';
+import {useNutrientStore} from "~/stores/useNutrientStore";
+
+// const nutritionStore = useNutrientStore();
 
 const isPopupVisible = defineModel('modelValue'); // This will be bound to v-model
 const props = defineProps({
@@ -19,6 +22,29 @@ const handleClose = (done: () => void) => {
         // Handle the cancellation
       });
 };
+
+// const saveResults = () => {
+//   // Assuming `results` is an array of nutrient data
+//   props.results.forEach((result) => {
+//     if (result && result.name) {
+//       // Save each result as a nutrient into the Nutrition Store
+//       nutritionStore.addNutrient({
+//         id: Date.now(), // Use a unique ID (you might want to use a better strategy)
+//         name: result.name,
+//         nuGrams: result.nuGrams || 0,
+//         nuCalories: result.nuCalories || 0,
+//         nuProteins: result.nuProteins || 0,
+//         nuCarbs: result.nuCarbs || 0,
+//         nuFibers: result.nuFibers || 0,
+//         nuFats: result.nuFats || 0,
+//         nuSatFats: result.nuSatFats || 0,
+//         nuPrice: result.nuPrice || 0,
+//       });
+//     }
+//   });
+//
+//   isPopupVisible.value = false; // Close the popup after saving
+// };
 </script>
 
 <template>
@@ -35,15 +61,7 @@ const handleClose = (done: () => void) => {
           <div v-if="index != 'recipes'">
             {{index}} :{{ result }}
           </div>
-          <div v-else>
 
-            <el-table :data="tableData" style="width: 100%">
-              <el-table-column prop="date" label="Date" width="180" />
-              <el-table-column prop="name" label="Name" width="180" />
-              <el-table-column prop="address" label="Address" />
-            </el-table>
-
-          </div>
         </li>
       </ul>
     </div>
