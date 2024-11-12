@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <SearchBar @query="handleQuery" />
+    <SearchBar @query="handleQuery"/>
 
     <el-row class="container">
       <!-- Cột trái (Filter) -->
@@ -28,7 +28,7 @@
       <el-col :span="13" class="middle-column">
         <h3>Search Results</h3>
         <!-- Pass query, sort, and order as props to ScrollPanel -->
-        <ScrollPanel :query="query" :sort="sortOption" :order="orderOption" @clickItem="handleClick" />
+        <ScrollPanel :query="query" :sort="sortOption" :order="orderOption" @clickItem="handleClick"/>
       </el-col>
 
       <!-- Cột phải (Hiển thị nội dung khi click vào item) -->
@@ -47,8 +47,18 @@
           </div>
           <div>
             <client-only>
-              <NutrientPolarChart :clickedContent="clickedContent" />
+              <NutrientPolarChart :clickedContent="clickedContent"/>
             </client-only>
+          </div>
+        </div>
+        <div style="display: flex;">
+          <div v-for="imgPath in clickedContent.imgPaths">
+            <el-image
+                :src="imgPath"
+                style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;"
+                fit="cover"
+                alt="Ingredient Image"
+            ></el-image>
           </div>
         </div>
 
@@ -59,7 +69,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import {ref} from 'vue'
 import ScrollPanel from '~/components/search/ScrollPanel.vue'
 import SearchBar from '~/components/search/SearchBar.vue'
 import NutrientPolarChart from "~/components/search/NutrientPolarChart.vue";
@@ -73,7 +83,8 @@ const clickedContent = ref({
   nuFats: 0,
   nuSatFats: 0,
   nuFibers: 0,
-  nuCarbs: 0
+  nuCarbs: 0,
+  imgPaths: []
 })
 
 const query = ref('')           // Store the current query value
@@ -95,7 +106,8 @@ const handleClick = (item) => {
     nuFats: item.nuFats || 0,
     nuSatFats: item.nuSatFats || 0,
     nuFibers: item.nuFibers || 0,
-    nuCarbs: item.nuCarbs || 0
+    nuCarbs: item.nuCarbs || 0,
+    imgPaths: item.imgPaths
   }
 }
 
@@ -114,6 +126,7 @@ const handleOrderChange = () => {
 }
 
 .left-column {
+  border-radius: 15px;
   background-color: #ffd3d3;
   padding: 20px;
   height: 40vh;
@@ -125,6 +138,7 @@ const handleOrderChange = () => {
 }
 
 .right-column {
+  border-radius: 15px;
   background-color: #ffd3d3;
   padding: 20px;
   height: 40vh;

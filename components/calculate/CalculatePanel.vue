@@ -39,6 +39,9 @@ const callApi = async () => {
     errorMessage.value = 'Error calling API. Please try again.';
   }
 };
+
+const carousel = ref(null);
+
 </script>
 
 <template>
@@ -50,25 +53,25 @@ const callApi = async () => {
           <tr>
             <td><label for="weight">Weight (kg):</label></td>
             <td>
-              <el-input id="weight" size="large" v-model.number="weight" type="number" placeholder="Enter weight in kg" aria-required="true" />
+              <el-input @click="carousel.setActiveItem(0);" id="weight" size="large" v-model.number="weight" type="number" placeholder="Enter weight in kg" aria-required="true" />
             </td>
           </tr>
           <tr>
             <td><label for="height">Height (cm):</label></td>
             <td>
-              <el-input id="height" size="large" v-model.number="height" type="number" placeholder="Enter height in cm" aria-required="true" />
+              <el-input @click="carousel.setActiveItem(1);" id="height" size="large" v-model.number="height" type="number" placeholder="Enter height in cm" aria-required="true" />
             </td>
           </tr>
           <tr>
             <td><label for="age">Age:</label></td>
             <td>
-              <el-input id="age" size="large" v-model.number="age" type="number" placeholder="Enter age" aria-required="true" />
+              <el-input @click="carousel.setActiveItem(2);" id="age" size="large" v-model.number="age" type="number" placeholder="Enter age" aria-required="true" />
             </td>
           </tr>
           <tr>
             <td><label for="gender">Gender:</label></td>
             <td>
-              <el-select id="gender" size="large" v-model="gender" placeholder="Select gender" aria-required="true">
+              <el-select @click="carousel.setActiveItem(3);" id="gender" size="large" v-model="gender" placeholder="Select gender" aria-required="true">
                 <el-option label="Male" value="male" />
                 <el-option label="Female" value="female" />
               </el-select>
@@ -77,7 +80,7 @@ const callApi = async () => {
           <tr>
             <td><label for="activityLevel">Activity Level:</label></td>
             <td>
-              <el-select id="activityLevel" size="large" v-model="activityLevel" placeholder="Select activity level" aria-required="true">
+              <el-select @click="carousel.setActiveItem(4);" id="activityLevel" size="large" v-model="activityLevel" placeholder="Select activity level" aria-required="true">
                 <el-option label="Sedentary" value="sedentary" />
                 <el-option label="Lightly Active" value="lightly_active" />
                 <el-option label="Moderately Active" value="moderately_active" />
@@ -94,29 +97,49 @@ const callApi = async () => {
         </table>
         <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
       </el-col>
-
       <!-- Cột Carousel Iframe -->
-      <el-col :span="12">
-        <el-carousel indicator-position="outside" height="700px">
-          <el-carousel-item>
+      <el-col :span="12" style="background: linear-gradient(to right, #ffffff, #fb8d8d); border-radius: 15px; padding: 20px;">
+
+      <el-carousel ref="carousel" indicator-position="outside" height="700px"  >
+          <el-carousel-item class="carousel-item" >
             <div>
-              <iframe src="https://giphy.com/embed/Ux85ug4OgULvsFBm0O" width="312" height="480" frameborder="0" class="giphy-embed" allowfullscreen></iframe>
+              <iframe src="https://giphy.com/embed/wq5bm6y4do9mbDF8zp" width="480" height="480" style="pointer-events: none;" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
             </div>
+            <b>
+              YOUR WEIGHT IS A POTENTIAL KEY FOR ME
+            </b>
           </el-carousel-item>
-          <el-carousel-item>
+          <el-carousel-item class="carousel-item">
             <div>
-              <iframe src="https://giphy.com/embed/9qadXtBaqSUUoo5wCW" width="480" height="271" frameborder="0" class="giphy-embed" allowfullscreen></iframe>
+              <iframe src="https://giphy.com/embed/8lakloarUFVa9V4zOf" width="480" height="480" style="pointer-events: none;" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
             </div>
+            <b>
+              MAKE YOUR HEIGHT BE TRUE .....
+            </b>
           </el-carousel-item>
-          <el-carousel-item>
+          <el-carousel-item class="carousel-item">
             <div>
-              <iframe src="https://giphy.com/embed/A8nBeY9Sod3823vUMq" width="480" height="480" frameborder="0" class="giphy-embed" allowfullscreen></iframe>
+              <iframe src="https://giphy.com/embed/6MC7g5hFqQyqa337pU" width="480" height="480" style="pointer-events: none;" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
             </div>
+            <b>
+              YOUR AGE IS NECESSARY
+            </b>
           </el-carousel-item>
-          <el-carousel-item>
+          <el-carousel-item class="carousel-item">
             <div>
-              <iframe src="https://giphy.com/embed/h1QthPTwAvtnnggCW6" width="402" height="480" frameborder="0" class="giphy-embed" allowfullscreen></iframe>
+              <iframe src="https://giphy.com/embed/vykq7hCWyub8dU8UFg" width="417" height="480" style="pointer-events: none;" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
             </div>
+            <b>
+              AND YOUR GENDER...
+            </b>
+          </el-carousel-item>
+          <el-carousel-item class="carousel-item">
+            <div>
+              <iframe src="https://giphy.com/embed/Vd2vmmSOEZzZQWXnxP" width="480" height="480" style="pointer-events: none;" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+            </div>
+            <b>
+              HOW OFTEN DO YOU DO EXERCISE?
+            </b>
           </el-carousel-item>
         </el-carousel>
       </el-col>
@@ -151,5 +174,13 @@ const callApi = async () => {
 
 .button {
   background-color: #b1527a;
+}
+
+.carousel-item{
+  display: flex;
+  font-family: "Gill Sans MT";
+  font-size: 64px;
+  color: #5a5a5a;
+  margin-top: 200px;
 }
 </style>

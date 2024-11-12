@@ -109,9 +109,13 @@ onMounted(() => {
   background: var(--el-color-primary-light-9);
   margin: 10px;
   margin-bottom: 40px;
-  color: var(--el-color-primary);
   cursor: pointer;
 }
+
+.infinite-list .infinite-list-item:hover {
+  background-color: #ffbcbc;
+}
+
 .infinite-list .infinite-list-item + .list-item {
   margin-top: 10px;
 }
