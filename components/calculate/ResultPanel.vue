@@ -167,8 +167,9 @@ const handleClose = (done: () => void) => {
                   <el-row v-for="ingredientPercent in recipe.ingradientPercents" :key="ingredientPercent.id">
                     <el-tooltip :content="ingredientPercent.ingredient.name" placement="top">
                       <el-image
-                          :src="ingredientPercent.ingredient.imgPaths[0]"
-                          style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;"
+
+                          :src="'http://localhost:8080'+ingredientPercent.ingredient.imgPaths[0]"
+                          style=" object-fit: cover; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);"
                           fit="cover"
                           alt="Ingredient Image"
                       ></el-image>

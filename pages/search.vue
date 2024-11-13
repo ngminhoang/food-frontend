@@ -1,6 +1,5 @@
 <template>
   <client-only>
-    <SearchBar @query="handleQuery"/>
 
     <el-row class="container">
       <!-- Cột trái (Filter) -->
@@ -9,23 +8,24 @@
           <h3>Filter Options</h3>
           <p>Sort By:</p>
           <el-radio-group v-model="sortOption" @change="handleSortChange">
-            <el-radio label="calo">Calories</el-radio>
-            <el-radio label="protein">Proteins</el-radio>
-            <el-radio label="fat">Fats</el-radio>
-            <el-radio label="satFat">Saturated Fats</el-radio>
-            <el-radio label="fiber">Fibers</el-radio>
-            <el-radio label="carb">Carbs</el-radio>
+            <el-radio class="radio" label="calo">Calories</el-radio>
+            <el-radio class="radio" label="protein">Proteins</el-radio>
+            <el-radio class="radio" label="fat">Fats</el-radio>
+            <el-radio class="radio" label="satFat">Saturated Fats</el-radio>
+            <el-radio class="radio" label="fiber">Fibers</el-radio>
+            <el-radio class="radio" label="carb">Carbs</el-radio>
           </el-radio-group>
           <p>Order:</p>
           <el-radio-group v-model="orderOption" @change="handleOrderChange">
-            <el-radio label="asc">Ascending</el-radio>
-            <el-radio label="desc">Descending</el-radio>
+            <el-radio class="radio" label="asc">Ascending</el-radio>
+            <el-radio class="radio" label="desc">Descending</el-radio>
           </el-radio-group>
         </div>
       </el-col>
 
       <!-- Cột giữa (Scroll Infinity Loading) -->
       <el-col :span="13" class="middle-column">
+        <SearchBar @query="handleQuery"/>
         <h3>Search Results</h3>
         <!-- Pass query, sort, and order as props to ScrollPanel -->
         <ScrollPanel :query="query" :sort="sortOption" :order="orderOption" @clickItem="handleClick"/>
@@ -36,14 +36,14 @@
         <div style="display: flex">
           <div class="content-display">
             <h3>Detail Information</h3>
-            <p>Name: {{ clickedContent.name }}</p>
-            <p>Calories: {{ clickedContent.nuCalories }}</p>
-            <p>Price: {{ clickedContent.nuPrice }}</p>
-            <p>Proteins: {{ clickedContent.nuProteins }}</p>
-            <p>Fats: {{ clickedContent.nuFats }}</p>
-            <p>Saturated Fats: {{ clickedContent.nuSatFats }}</p>
-            <p>Fibers: {{ clickedContent.nuFibers }}</p>
-            <p>Carbs: {{ clickedContent.nuCarbs }}</p>
+            <p>Name: <b>{{ clickedContent.name }}</b></p>
+            <p>Calories: <b>{{ clickedContent.nuCalories }} (Kcal)</b></p>
+            <p>Price: $ <b>{{ clickedContent.nuPrice }}</b></p>
+            <p>Proteins: <b>{{ clickedContent.nuProteins }} (Gram)</b></p>
+            <p>Fats: <b>{{ clickedContent.nuFats }}</b> (Gram)</p>
+            <p>Saturated Fats: <b>{{ clickedContent.nuSatFats }} (Gram)</b></p>
+            <p>Fibers: <b>{{ clickedContent.nuFibers }} (Gram)</b></p>
+            <p>Carbs: <b>{{ clickedContent.nuCarbs }} (Gram)</b></p>
           </div>
           <div>
             <client-only>
@@ -51,15 +51,19 @@
             </client-only>
           </div>
         </div>
-        <div style="display: flex;">
-          <div v-for="imgPath in clickedContent.imgPaths">
-            <el-image
-                :src="imgPath"
-                style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;"
-                fit="cover"
-                alt="Ingredient Image"
-            ></el-image>
-          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+            <div
+                v-for="imgPath in clickedContent.imgPaths"
+                :key="imgPath"
+                style="flex: 1 1 100px; max-width: calc(33.33% - 10px);"
+            >
+              <el-image
+                  :src="'http://localhost:8080' + imgPath"
+                  style=" object-fit: cover; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);"
+                  fit="cover"
+                  alt="Ingredient Image"
+              ></el-image>
+            </div>
         </div>
 
 
@@ -126,6 +130,7 @@ const handleOrderChange = () => {
 }
 
 .left-column {
+  margin-top: 15px;
   border-radius: 15px;
   background-color: #ffd3d3;
   padding: 20px;
@@ -133,11 +138,11 @@ const handleOrderChange = () => {
 }
 
 .middle-column {
-  background-color: #ffffff;
   padding: 20px;
 }
 
 .right-column {
+  margin-top: 15px;
   border-radius: 15px;
   background-color: #ffd3d3;
   padding: 20px;
@@ -148,4 +153,10 @@ const handleOrderChange = () => {
   padding: 10px;
   font-style: italic;
 }
+
+.radio{
+  color: #b1527a;
+  font-weight: bold;
+}
+
 </style>
