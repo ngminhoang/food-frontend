@@ -93,8 +93,13 @@ const goToCalculate = () => {
 }
 
 .panel {
+
+
+  background: linear-gradient(to bottom, #b1527a, #ffffff);
+
+  height: 120%;
   flex: 1; /* Each panel takes equal space */
-  background-color: #ff9797; /* White background for each panel */
+  //background-color: #b1527a; /* White background for each panel */
   border-radius: 8px; /* Rounded corners */
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow for the panel */
@@ -104,7 +109,8 @@ const goToCalculate = () => {
 }
 
 .panel:hover {
-  background-color: #e8b9b9;
+  background: #f19fbf;
+  //background-color: #f19fbf;
   transform: translateY(-5px); /* Lift the panel on hover */
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Deeper shadow on hover */
 }

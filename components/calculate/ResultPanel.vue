@@ -3,6 +3,7 @@ import {ref, defineModel, defineProps} from 'vue';
 import {ElMessageBox} from 'element-plus';
 import {useNutrientStore} from "~/stores/useNutrientStore";
 import NutrientPolarChart from "~/components/search/NutrientPolarChart.vue";
+import {WarnTriangleFilled} from "@element-plus/icons-vue";
 
 // const nutritionStore = useNutrientStore();
 const props = defineProps<{ results: Parameter }>();
@@ -80,7 +81,11 @@ const handleClose = (done: () => void) => {
         <!-- Cột Input -->
         <el-col :span="12"  style="background: linear-gradient(to right, #fb8d8d, #ffffff);border-radius: 15px">
           <h3>Summary</h3>
-          <div style="display: flex">
+
+          <div v-if="props.results.sumCalories===0 || props.results.sumCalories==null">
+            <el-icon><WarnTriangleFilled /></el-icon> Sorry, your data you provided seem wrong
+          </div>
+          <div v-else style="display: flex">
             <div>
               <table>
                 <tbody>
@@ -123,66 +128,81 @@ const handleClose = (done: () => void) => {
 
         <el-col :span="12">
           <h3>Recipes</h3>
-          <div>
-            <table>
-              <thead>
-              <tr>
-                <th>Ingredient</th>
-                <th>Grams</th>
-                <th>Calories</th>
-                <th>Proteins</th>
-                <th>Carbohydrates</th>
-                <th>Fibers</th>
-                <th>Fats</th>
-                <th>Saturated Fats</th>
-                <th>Price</th>
-                <th>Percent</th>
+          <div v-if="sumPrice!=0">
 
-              </tr>
-              </thead>
-              <tbody>
-              <tr v-for="recipe in props.results.recipes" :key="recipe.id">
-                <template v-for="(ingredientPercent, index) in recipe.ingradientPercents" :key="ingredientPercent.id">
-                  <tr v-if="index !== 0"></tr> <!-- Separate rows for each ingredient after the first one -->
-                  <td>{{ ingredientPercent.ingredient.name }}</td>
-                  <td>{{ ingredientPercent.ingredient.nuGrams }}</td>
-                  <td>{{ ingredientPercent.ingredient.nuCalories }}</td>
-                  <td>{{ ingredientPercent.ingredient.nuProteins }}</td>
-                  <td>{{ ingredientPercent.ingredient.nuCarbs }}</td>
-                  <td>{{ ingredientPercent.ingredient.nuFibers }}</td>
-                  <td>{{ ingredientPercent.ingredient.nuFats }}</td>
-                  <td>{{ ingredientPercent.ingredient.nuSatFats }}</td>
-                  <td>${{ ingredientPercent.ingredient.nuPrice }}</td>
-                  <td style="background-color: aquamarine">{{ Math.ceil(ingredientPercent.percent) }}%</td>
-                </template>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-          <div>
+            <div>
+              <table>
+                <thead>
+                <tr>
+                  <th>Ingredient</th>
+                  <th>Grams</th>
+                  <th>Calories</th>
+                  <th>Proteins</th>
+                  <th>Carbohydrates</th>
+                  <th>Fibers</th>
+                  <th>Fats</th>
+                  <th>Saturated Fats</th>
+                  <th>Price</th>
+                  <th>Percent</th>
 
-            <div style="margin-top: 24px;">
-              <el-row :gutter="10">
-                <el-col v-for="recipe in props.results.recipes" :key="recipe.id" :span="6">
-                  <el-row v-for="ingredientPercent in recipe.ingradientPercents" :key="ingredientPercent.id">
-                    <el-tooltip :content="ingredientPercent.ingredient.name" placement="top">
-                      <el-image
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="recipe in props.results.recipes" :key="recipe.id">
+                  <template v-for="(ingredientPercent, index) in recipe.ingradientPercents" :key="ingredientPercent.id">
+                    <tr v-if="index !== 0"></tr> <!-- Separate rows for each ingredient after the first one -->
+                    <td>{{ ingredientPercent.ingredient.name }}</td>
+                    <td>{{ ingredientPercent.ingredient.nuGrams }}</td>
+                    <td>{{ ingredientPercent.ingredient.nuCalories }}</td>
+                    <td>{{ ingredientPercent.ingredient.nuProteins }}</td>
+                    <td>{{ ingredientPercent.ingredient.nuCarbs }}</td>
+                    <td>{{ ingredientPercent.ingredient.nuFibers }}</td>
+                    <td>{{ ingredientPercent.ingredient.nuFats }}</td>
+                    <td>{{ ingredientPercent.ingredient.nuSatFats }}</td>
+                    <td>${{ ingredientPercent.ingredient.nuPrice }}</td>
+                    <td style="background-color: aquamarine">{{ Math.ceil(ingredientPercent.percent) }}%</td>
+                  </template>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+            <div>
 
-                          :src="'http://localhost:8080'+ingredientPercent.ingredient.imgPaths[0]"
-                          style=" object-fit: cover; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);"
-                          fit="cover"
-                          alt="Ingredient Image"
-                      ></el-image>
-                    </el-tooltip>
-                  </el-row>
-                </el-col>
-              </el-row>
+              <div style="margin-top: 24px;">
+                <el-row :gutter="10">
+                  <el-col v-for="recipe in props.results.recipes" :key="recipe.id" :span="6">
+                    <el-row v-for="ingredientPercent in recipe.ingradientPercents" :key="ingredientPercent.id">
+                      <el-tooltip :content="ingredientPercent.ingredient.name" placement="top">
+                        <el-image
+
+                            :src="'http://localhost:8080'+ingredientPercent.ingredient.imgPaths[0]"
+                            style=" object-fit: cover; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);"
+                            fit="cover"
+                            alt="Ingredient Image"
+                        ></el-image>
+                      </el-tooltip>
+                    </el-row>
+                  </el-col>
+                </el-row>
+              </div>
+
+            </div>
+            <div style="font-size: 30px; margin-top: 24px">
+              Total: For earch meal, you only need <b>${{sumPrice}}</b>
             </div>
 
           </div>
-          <div style="font-size: 30px; margin-top: 24px">
-            Total: For earch meal, you only need <b>${{sumPrice}}</b>
+          <div v-else>
+
+            <div style="font-size: 30px; margin-top: 24px">
+              <el-icon><WarnTriangleFilled /></el-icon> Sorry, with the results, I cannot calculate the optimal diet for you
+            </div>
+
           </div>
+
+
+
+
 
           </el-col>
 

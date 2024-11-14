@@ -14,7 +14,7 @@ const scrollToAbout = () => {
   if (target) {
     target.scrollIntoView({
       behavior: 'smooth',  // Smooth scrolling
-      block: 'end',      // Align to the top of the viewport
+      block: 'start',      // Align to the top of the viewport
     });
   }
 };
@@ -24,7 +24,7 @@ const scrollToContact = () => {
   if (target) {
     target.scrollIntoView({
       behavior: 'smooth',  // Smooth scrolling
-      block: 'end',      // Align to the top of the viewport
+      block: 'start',      // Align to the top of the viewport
     });
   }
 };

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, defineEmits } from 'vue';
 import axios from 'axios';
+import {useNutrientStore} from "~/stores/useNutrientStore";
 
 const weight = ref<number | null>(null);
 const height = ref<number | null>(null);
@@ -10,6 +11,7 @@ const activityLevel = ref<string | null>(null);
 const errorMessage = ref<string | null>(null);
 
 const emit = defineEmits(['showPopup']);
+const nutrientStore = useNutrientStore();
 
 // API call function
 const callApi = async () => {
@@ -32,6 +34,16 @@ const callApi = async () => {
       },
     });
     console.log('API response:', response.data);
+
+    // Use Pinia store action to save each nutrient
+
+    // nutrientStore.setSumCalories(response.data.sumCalories); // or use SumCalories if that's the correct field
+    // nutrientStore.setSumProteins(response.data.sumProteins);
+    // nutrientStore.setSumFibers(response.data.sumFibers);
+    // nutrientStore.setSumFats(response.data.sumFats);
+    // nutrientStore.setSumSatFats(response.data.sumSatFats);
+    // nutrientStore.setSumCarbs(response.data.sumCarbs);
+
     emit('showPopup', { response: response.data }); // Emit response data
 
   } catch (error) {

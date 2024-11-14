@@ -12,6 +12,7 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
     "@nuxtjs/google-fonts": "^3.2.0",
+    "@pinia/nuxt": "^0.7.0",
     "apexcharts": "^4.0.0",
     "axios": "^1.7.7",
     "chart.js": "^3.9.1",
