@@ -8,7 +8,7 @@ const isPopupVisible = ref(false);
 const results = ref<[]>([]);
 
 // Event handler for showing the popup and updating results
-function showPopup(payload) {
+function showPopup(payload: any) {
   results.value = payload.response;
   isPopupVisible.value = true;
 }

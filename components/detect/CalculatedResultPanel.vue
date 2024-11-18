@@ -2,11 +2,11 @@
 import {ref, defineModel, defineProps} from 'vue';
 import {ElMessageBox} from 'element-plus';
 import {useNutrientStore} from "~/stores/useNutrientStore";
-import NutrientPolarChart from "~/components/search/NutrientPolarChart.vue";
 import {WarnTriangleFilled} from "@element-plus/icons-vue";
+import NutrientPolarChart from "~/components/search/NutrientPolarChart.vue";
 
 // const nutritionStore = useNutrientStore();
-const props = defineProps<{ results: Parameter }>();
+const props = defineProps<{ results: any, foodName: string }>();
 
 const nutrientStore = useNutrientStore();
 
@@ -63,7 +63,6 @@ watch(
     {immediate: true}
 );
 
-const isPopupVisible = defineModel('modelValue'); // This will be bound to v-model
 
 
 const handleClose = (done: () => void) => {
@@ -79,18 +78,12 @@ const handleClose = (done: () => void) => {
 </script>
 
 <template>
-  <el-dialog
-      v-model="isPopupVisible"
-      title="Results"
-      width="80%"
-      :before-close="handleClose"
-  >
     <div>
 
       <el-row :gutter="20">
         <!-- Cột Input -->
-        <el-col :span="12" style="background: linear-gradient(to right, #fb8d8d, #ffffff);border-radius: 15px">
-          <h3>Summary</h3>
+        <el-col :span="8" style="background: linear-gradient(to right, #fb8d8d, #ffffff);border-radius: 15px">
+          <h3>If you ate {{props.foodName}}, the rest nutrients you have to consume:</h3>
 
           <div v-if="props.results.sumCalories===0 || props.results.sumCalories==null">
             <el-icon>
@@ -129,17 +122,13 @@ const handleClose = (done: () => void) => {
                 </tbody>
               </table>
             </div>
-
-            <div>
-              <client-only>
-                <NutrientPolarChart :clickedContent="clickedContent"/>
-              </client-only>
-            </div>
-
+          </div>
+          <div style="font-size: 30px; margin-top: 24px">
+            Total: For today, you only need <b>${{ sumPrice }}</b>
           </div>
         </el-col>
 
-        <el-col :span="12">
+        <el-col :span="16">
           <h3>Recipes</h3>
           <div v-if="sumPrice!=0">
 
@@ -199,9 +188,6 @@ const handleClose = (done: () => void) => {
               </div>
 
             </div>
-            <div style="font-size: 30px; margin-top: 24px">
-              Total: For each meal, you only need <b>${{ sumPrice }}</b>
-            </div>
 
           </div>
           <div v-else>
@@ -220,13 +206,6 @@ const handleClose = (done: () => void) => {
 
       </el-row>
     </div>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="isPopupVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="isPopupVisible = false">Confirm</el-button>
-      </div>
-    </template>
-  </el-dialog>
 </template>
 
 <style scoped>

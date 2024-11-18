@@ -26,7 +26,17 @@ export const useNutrientStore = defineStore('nutrient', {
         } as Nutrient,
     }),
 
+    getters: {
+        getSumCalories: (state) => state.nutrient.sumCalories,
+        getSumProteins: (state) => state.nutrient.sumProteins,
+        getSumFibers: (state) => state.nutrient.sumFibers,
+        getSumFats: (state) => state.nutrient.sumFats,
+        getSumSatFats: (state) => state.nutrient.sumSatFats,
+        getSumCarbs: (state) => state.nutrient.sumCarbs,
+    },
+
     actions: {
+
         setSumCalories(sumCalories: number) {
             this.nutrient.sumCalories = sumCalories;
         },
@@ -44,6 +54,9 @@ export const useNutrientStore = defineStore('nutrient', {
         },
         setSumCarbs(sumCarbs: number) {
             this.nutrient.sumCarbs = sumCarbs;
+        },
+        areAllValuesZero() {
+            return Object.values(this.nutrient).every(value => value === 0);
         },
     },
 });
