@@ -36,15 +36,45 @@
         <div style="display: flex">
           <div class="content-display">
             <h3>Detail Information</h3>
-            <p>Name: <b>{{ clickedContent.name }}</b></p>
-            <p>Calories: <b>{{ clickedContent.nuCalories }} (Kcal)</b></p>
-            <p>Price: $ <b>{{ clickedContent.nuPrice }}</b></p>
-            <p>Proteins: <b>{{ clickedContent.nuProteins }} (Gram)</b></p>
-            <p>Fats: <b>{{ clickedContent.nuFats }}</b> (Gram)</p>
-            <p>Saturated Fats: <b>{{ clickedContent.nuSatFats }} (Gram)</b></p>
-            <p>Fibers: <b>{{ clickedContent.nuFibers }} (Gram)</b></p>
-            <p>Carbs: <b>{{ clickedContent.nuCarbs }} (Gram)</b></p>
+            <table>
+              <tr>
+                <td><b>Name:</b></td>
+                <td>{{ clickedContent.name }}</td>
+              </tr>
+              <tr>
+                <td><b>Calories:</b></td>
+                <td>{{ clickedContent.nuCalories }} (Kcal)</td>
+              </tr>
+              <tr>
+                <td><b>Price:</b></td>
+                <td :style="{ color: clickedContent.nuPrice === 0 ? 'red' : 'green' }">
+                  $ {{ clickedContent.nuPrice }}
+                </td>
+
+              </tr>
+              <tr>
+                <td><b>Proteins:</b></td>
+                <td>{{ clickedContent.nuProteins }} (Gram)</td>
+              </tr>
+              <tr>
+                <td><b>Fats:</b></td>
+                <td>{{ clickedContent.nuFats }} (Gram)</td>
+              </tr>
+              <tr>
+                <td><b>Saturated Fats:</b></td>
+                <td>{{ clickedContent.nuSatFats }} (Gram)</td>
+              </tr>
+              <tr>
+                <td><b>Fibers:</b></td>
+                <td>{{ clickedContent.nuFibers }} (Gram)</td>
+              </tr>
+              <tr>
+                <td><b>Carbs:</b></td>
+                <td>{{ clickedContent.nuCarbs }} (Gram)</td>
+              </tr>
+            </table>
           </div>
+
           <div>
             <client-only>
               <NutrientPolarChart :clickedContent="clickedContent"/>
@@ -132,9 +162,9 @@ const handleOrderChange = () => {
 .left-column {
   margin-top: 15px;
   border-radius: 15px;
-  background-color: #ffd3d3;
+  background-color: #e8b9b9;
   padding: 20px;
-  height: 40vh;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .middle-column {
@@ -144,9 +174,9 @@ const handleOrderChange = () => {
 .right-column {
   margin-top: 15px;
   border-radius: 15px;
-  background-color: #ffd3d3;
+  background-color: #ffd0d0;
   padding: 20px;
-  height: 40vh;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .content-display {
@@ -159,4 +189,41 @@ const handleOrderChange = () => {
   font-weight: bold;
 }
 
+</style>
+<style scoped>
+.content-display {
+  margin: 20px;
+  font-family: Arial, sans-serif;
+}
+
+h3 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table td {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+}
+
+table td:first-child {
+  font-weight: bold;
+  color: #555;
+  text-align: right;
+  width: 30%; /* Adjust column width */
+}
+
+table td:last-child {
+  text-align: left;
+  width: 70%; /* Adjust column width */
+}
+
+table tr:nth-child(even) {
+  background-color: rgba(249, 249, 249, 0.25);
+}
 </style>

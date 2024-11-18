@@ -12,13 +12,30 @@
         class="infinite-list-item"
         @click="handleClick(item)"
     >
-      {{ item.name }}
+
+      <img style=" width: 35px;
+        height: 35px;
+        object-fit: cover;
+        border-radius: 32px;
+        border: 1px solid #b3b3b3;"
+           :src="'http://localhost:8080'+ item.imgPaths[0]"
+      >
+      <el-divider direction="vertical"/>
+      <span><b>{{ item.name }}</b></span>
+      <el-divider direction="vertical"/>
+      <span>{{ item.nuCalories }} Kcal</span>
+      <el-divider direction="vertical"/>
+      <span
+          :style="{ color: item.nuPrice == 0 || item.nuPrice == undefined ? 'red' : 'green' }">$ {{
+          item.nuPrice ?? 0
+        }}</span>
+      <span style="color: #636363;">&nbsp;&nbsp;(per 100 Grams)</span>
     </li>
   </ul>
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, defineEmits, onMounted } from 'vue'
+import {ref, watch, defineEmits, onMounted} from 'vue'
 import axios from 'axios'
 
 const emit = defineEmits(['clickItem'])
@@ -101,6 +118,7 @@ onMounted(() => {
   margin: 0;
   list-style: none;
 }
+
 .infinite-list .infinite-list-item {
   display: flex;
   align-items: center;

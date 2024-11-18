@@ -22,6 +22,16 @@ const clickedContent = ref({
 })
 
 const sumPrice = ref(0)
+const isPopupVisible = defineModel('modelValue'); // This will be bound to v-model
+const handleClose = (done: () => void) => {
+  ElMessageBox.confirm('Are you sure to close this dialog?')
+      .then(() => {
+        done(); // Close the dialog
+      })
+      .catch(() => {
+        // Handle the cancellation
+      });
+};
 
 watch(
     () => props.results,
@@ -51,30 +61,18 @@ watch(
         }
       }
       sumPrice.value = sumPrice.value / 100
-
-      nutrientStore.setSumProteins(newValue.sumProteins)
-      nutrientStore.setSumCalories(newValue.sumCalories)
-      nutrientStore.setSumFibers(newValue.sumFibers)
-      nutrientStore.setSumFats(newValue.sumFats)
-      nutrientStore.setSumSatFats(newValue.sumSatFats)
-      nutrientStore.setSumCarbs(newValue.sumCarbs)
+      if(isPopupVisible.value){
+        nutrientStore.setSumProteins(newValue.sumProteins??0)
+        nutrientStore.setSumCalories(newValue.sumCalories??0)
+        nutrientStore.setSumFibers(newValue.sumFibers??0)
+        nutrientStore.setSumFats(newValue.sumFats??0)
+        nutrientStore.setSumSatFats(newValue.sumSatFats??0)
+        nutrientStore.setSumCarbs(newValue.sumCarbs??0)
+      }
 
     },
     {immediate: true}
 );
-
-const isPopupVisible = defineModel('modelValue'); // This will be bound to v-model
-
-
-const handleClose = (done: () => void) => {
-  ElMessageBox.confirm('Are you sure to close this dialog?')
-      .then(() => {
-        done(); // Close the dialog
-      })
-      .catch(() => {
-        // Handle the cancellation
-      });
-};
 
 </script>
 

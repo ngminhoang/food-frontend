@@ -74,7 +74,7 @@ body {
   list-style: none;
   width: 20px;
   height: 20px;
-  background: rgb(255, 160, 196);
+  background: rgb(253, 187, 212);
   animation: animate 25s linear infinite;
   bottom: -150px;
 

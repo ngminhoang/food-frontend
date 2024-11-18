@@ -1,8 +1,21 @@
 <script setup lang="ts">
 import MainPanel from "~/components/main/MainPanel.vue";
 import Background from "~/components/icons/Background.vue";
-import AboutPanel from "~/components/main/AboutPanel.vue";
-import ContactPanel from "~/components/main/ContactPanel.vue";
+import {useNutrientStore} from '~/stores/useNutrientStore';
+const nutrientStore = useNutrientStore()
+
+onMounted(()=>{
+  console.log('Nutrient Store Data:', {
+    sumCalories: nutrientStore.getSumCalories,
+    sumProteins: nutrientStore.getSumProteins,
+    sumCarbs: nutrientStore.getSumCarbs,
+    sumFibers: nutrientStore.getSumFibers,
+    sumFats: nutrientStore.getSumFats,
+    sumSatFats: nutrientStore.getSumSatFats,
+  });
+})
+
+
 </script>
 
 <template>

@@ -56,7 +56,7 @@ export const useNutrientStore = defineStore('nutrient', {
             this.nutrient.sumCarbs = sumCarbs;
         },
         areAllValuesZero() {
-            return Object.values(this.nutrient).every(value => value === 0);
+            return Object.values(this.nutrient).every(value => value === 0 || value === undefined);
         },
     },
 });

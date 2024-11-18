@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import {ref, computed} from 'vue';
 import {ElMessage} from 'element-plus';
-import {Plus, ScaleToOriginal, WarningFilled} from '@element-plus/icons-vue';
+import {Check, Plus, Close, WarningFilled} from '@element-plus/icons-vue';
 import axios from 'axios';
 import type {UploadProps} from 'element-plus';
 import type {FoodAnalysisResponse} from '~/interfaces/FoodAnalysisResponse';
 import RadarChart from '~/components/detect/RadarChart.vue';
 import {useNutrientStore} from '~/stores/useNutrientStore';
 import CalculatedResultPanel from "~/components/detect/CalculatedResultPanel.vue";
-import {c} from "unplugin-vue-router/types-DBiN4-4c";
+import SearchMore from "~/components/detect/SearchMore.vue";
 
 const imageUrl = ref<string>('');
 const uploadedFile = ref<File | null>(null);
@@ -16,6 +16,7 @@ const analysisData = ref<FoodAnalysisResponse | null>(null);
 const nutrientStore = useNutrientStore();
 
 const isPopupVisible = ref(false);
+const isDetectedNutrients = ref(false);
 const results = ref<[]>([]);
 
 const calories = ref<number>(0)
@@ -67,17 +68,18 @@ const analyzeImage = async () => {
 
     // Extract nutrition data from the API response
     const nutrition = analysisData.value.items[0].food[0].food_info.nutrition;
-    gram.value =analysisData.value.items[0].food[0].food_info.g_per_serving;
-    calories.value = nutrition.calories_100g/100*gram.value??0;
-    proteins.value = nutrition.proteins_100g/100*gram.value??0;
-    fibers.value = nutrition.fibers_100g/100*gram.value??0;
-    carbs.value = nutrition.carbs_100g/100*gram.value??0;
-    fats.value = nutrition.fat_100g/100*gram.value??0;
+    gram.value = analysisData.value.items[0].food[0].food_info.g_per_serving;
+    calories.value = nutrition.calories_100g / 100 * gram.value ?? 0;
+    proteins.value = nutrition.proteins_100g / 100 * gram.value ?? 0;
+    fibers.value = nutrition.fibers_100g / 100 * gram.value ?? 0;
+    carbs.value = nutrition.carbs_100g / 100 * gram.value ?? 0;
+    fats.value = nutrition.fat_100g / 100 * gram.value ?? 0;
     satFats.value = 0;
 
 
     // Check if the API and store data are consistent
     if (calories.value !== 0 && nutrientStore.getSumCalories !== 0) {
+      isDetectedNutrients.value = false
       // console.log('Valid data in nutrient store:', nutrientStore.getSumCalories);
 
       console.log('Nutrient Store Data:', {
@@ -118,6 +120,9 @@ const analyzeImage = async () => {
           differences.fatsDiff,
           differences.satFatsDiff
       );
+    } else {
+      isPopupVisible.value = false
+      isDetectedNutrients.value = true
     }
   } catch (error) {
     ElMessage.error('Failed to analyze image.');
@@ -161,48 +166,119 @@ const radarChartData = computed(() => {
         <b>UPLOAD YOUR IMAGE HERE</b>
       </div>
 
-
-      <div class="polar-chart">
-          <RadarChart
-              :categories="['Proteins', 'Carbs', 'Fibers', 'Fats', 'SatFats']"
-              :data-series="radarChartData"
-          />
-
-      </div>
-
       <div class="data-display">
+
         <div v-if="analysisData" class="analysis-results">
-          <strong>{{ analysisData.items[0].food[0].food_info.display_name }}</strong>
-          <div>Nutritional Info For Per {{gram}} grams:</div>
-          <ul>
-            <li>Calories: {{ calories }}</li>
-            <li>Proteins: {{ proteins }}</li>
-            <li>Carbs: {{ carbs }}</li>
-            <li>Fibers: {{ fibers }}</li>
-            <li>Fats: {{ fats }}</li>
-            <li>SatFats: {{ satFats }}</li>
-          </ul>
+          <div style="background-color: #cdfde2; padding: 5px" v-if="calories!=0">
+            <el-icon>
+              <Check/>
+            </el-icon>
+            image clear enough to detect nutrients
+          </div>
+          <div style="background-color: #ffac00; padding: 5px" v-else>
+            <el-icon>
+              <Close/>
+            </el-icon>
+            cannot find out the nutrients
+          </div>
+          <strong style="font-size: 32px">{{ analysisData.items[0].food[0].food_info.display_name }}</strong>
+          <br>
+          <div>Nutritional Info For Per {{ gram }} grams:</div>
+          <br>
+          <!-- Nutritional Information Table -->
+
+          <table>
+            <tbody>
+            <tr>
+              <td>Calories:</td>
+              <td><b>{{ Math.ceil(calories) }}</b> (Kcal)</td>
+            </tr>
+            <tr>
+              <td>Proteins:</td>
+              <td><b>{{ Math.ceil(proteins) }}</b> (Grams)</td>
+            </tr>
+            <tr>
+              <td>Carbohydrates:</td>
+              <td><b>{{ Math.ceil(carbs) }}</b> (Grams)</td>
+            </tr>
+            <tr>
+              <td>Fibers:</td>
+              <td><b>{{ Math.ceil(fibers) }}</b> (Grams)</td>
+            </tr>
+            <tr>
+              <td>Fats:</td>
+              <td><b>{{ Math.ceil(fats) }}</b> (Grams)</td>
+            </tr>
+            <tr>
+              <td>Saturated Fats:</td>
+              <td><b>{{ Math.ceil(satFats) }}</b> (Grams)</td>
+            </tr>
+            </tbody>
+          </table>
         </div>
       </div>
+
+      <div class="polar-chart">
+        <RadarChart
+            :categories="['Proteins', 'Carbs', 'Fibers', 'Fats', 'SatFats']"
+            :data-series="radarChartData"
+        />
+
+      </div>
+
+
     </el-col>
 
     <!-- Right Column -->
     <el-col :span="18" class="right-column">
-      <div class="table-display">
-        <el-table :data="analysisData?.items[0].food[0].ingredients || []" style="width: 100%">
-          <el-table-column prop="food_info.display_name" label="Food Item"/>
-          <el-table-column prop="food_info.nutrition.calories_100g" label="Calories (per 100g)"/>
-          <el-table-column prop="food_info.nutrition.proteins_100g" label="Proteins (per 100g)"/>
-          <el-table-column prop="food_info.nutrition.carbs_100g" label="Carbs (per 100g)"/>
-          <el-table-column prop="food_info.nutrition.fibers_100g" label="Fibers (per 100g)"/>
-          <el-table-column prop="food_info.nutrition.fat_100g" label="Fats (per 100g)"/>
-          <el-table-column prop="food_info.nutrition.sat_fat_100g" label="Sat Fats (per 100g)"/>
-        </el-table>
+      <div class="table-display" v-if="analysisData">
+        <div v-if="analysisData?.items[0].food[0].ingredients.length>0">
+          <div style="background-color: #a4f8c9; padding: 5px">
+            <el-icon>
+              <Check/>
+            </el-icon>
+            image clear enough to detect ingredients
+          </div>
+          <h1>{{ analysisData.items[0].food[0].food_info.display_name }}'s Ingredients :</h1>
+          <table class="custom-table">
+            <thead>
+            <tr>
+              <th>Food Item</th>
+              <th>Calories (per 100g)</th>
+              <th>Proteins (per 100g)</th>
+              <th>Carbs (per 100g)</th>
+              <th>Fibers (per 100g)</th>
+              <th>Fats (per 100g)</th>
+              <th>Sat Fats (per 100g)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="item in analysisData?.items[0].food[0].ingredients || []" :key="item.food_info.display_name">
+              <td>{{ item.food_info.display_name }}</td>
+              <td>{{ Math.ceil(item.food_info.nutrition.calories_100g) }}</td>
+              <td>{{ Math.ceil(item.food_info.nutrition.proteins_100g) }}</td>
+              <td>{{ Math.ceil(item.food_info.nutrition.carbs_100g) }}</td>
+              <td>{{ Math.ceil(item.food_info.nutrition.fibers_100g) }}</td>
+              <td>{{ Math.ceil(item.food_info.nutrition.fat_100g) }}</td>
+              <td>{{ Math.ceil(item.food_info.nutrition.sat_fat_100g) }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div v-else>
+          <div style="background-color: #ffac00; padding: 5px">
+            <el-icon>
+              <Close/>
+            </el-icon>
+            cannot find out the ingredients of {{analysisData.items[0].food[0].food_info.display_name}}
+          </div>
+        </div>
       </div>
       <div v-if="isPopupVisible && !nutrientStore.areAllValuesZero()">
         <CalculatedResultPanel :results="results"
                                :food-name="analysisData.items[0].food[0].food_info.display_name"></CalculatedResultPanel>
       </div>
+
       <div v-else-if="nutrientStore.areAllValuesZero()" style="background-color: #ffefca; padding: 5px; margin:5px">
         <el-icon>
           <WarningFilled/>
@@ -211,6 +287,15 @@ const radarChartData = computed(() => {
         <NuxtLink to="/calculate" class="nav-link">Calculate</NuxtLink>
 
       </div>
+      <div v-else-if="isDetectedNutrients">
+        <div style="background-color: #ffac00; padding: 5px">
+          <el-icon>
+            <Close/>
+          </el-icon>
+          cannot calculate because cannot detect the nutrients of {{analysisData.items[0].food[0].food_info.display_name}}
+        </div>
+        <SearchMore/>
+      </div>
 
     </el-col>
   </el-row>
@@ -218,6 +303,8 @@ const radarChartData = computed(() => {
 
 
 <style scoped>
+
+
 .avatar-uploader .avatar {
   width: 178px;
   height: 178px;
@@ -269,15 +356,24 @@ const radarChartData = computed(() => {
   height: 100%;
 }
 
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
 .left-column {
-  background-color: #e1e1e1;
-  border-radius: 8px;
+
+  margin-top: 15px;
+  background-color: #eab6b6;
+  border-radius: 16px;
   flex: 40%; /* 40% width for the left column */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 20px;
   padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0.5, 0, 0.5);
 }
 
 .right-column {
@@ -319,9 +415,6 @@ const radarChartData = computed(() => {
   flex: 1; /* Takes the top space */
 }
 
-.table-display {
-  flex: 2; /* Takes the bottom space, larger than the message display */
-}
 
 .avatar-uploader .avatar {
   width: 178px;
@@ -344,5 +437,35 @@ const radarChartData = computed(() => {
 .el-message {
   margin-bottom: 20px;
 }
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse; /* Removes spacing between cells */
+  border-radius: 8px;
+  overflow: hidden; /* Ensures the border-radius applies to the table edges */
+  opacity: 0.95;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional shadow for depth */
+}
+
+.custom-table th,
+.custom-table td {
+  border: 1px solid #ddd; /* Light border around cells */
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.custom-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.custom-table tbody tr:nth-child(even) {
+  background-color: rgba(249, 249, 249, 0.38); /* Light gray for alternating rows */
+}
+
+.custom-table tbody tr:nth-child(odd) {
+  background-color: rgba(232, 185, 185, 0.37); /* White for odd rows */
+}
+
 </style>
 

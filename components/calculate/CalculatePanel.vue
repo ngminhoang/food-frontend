@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, defineEmits } from 'vue';
 import axios from 'axios';
-import {useNutrientStore} from "~/stores/useNutrientStore";
 
 const weight = ref<number | null>(null);
 const height = ref<number | null>(null);
@@ -11,7 +10,6 @@ const activityLevel = ref<string | null>(null);
 const errorMessage = ref<string | null>(null);
 
 const emit = defineEmits(['showPopup']);
-const nutrientStore = useNutrientStore();
 
 // API call function
 const callApi = async () => {
