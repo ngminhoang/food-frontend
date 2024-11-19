@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, defineEmits } from 'vue';
 import axios from 'axios';
+import { ElLoading } from 'element-plus';
 
 const weight = ref<number | null>(null);
 const height = ref<number | null>(null);
@@ -11,7 +12,7 @@ const errorMessage = ref<string | null>(null);
 
 const emit = defineEmits(['showPopup']);
 
-// API call function
+// API call function with loading spinner
 const callApi = async () => {
   // Validate required fields
   if (weight.value === null || height.value === null || age.value === null || !gender.value || !activityLevel.value) {
@@ -20,6 +21,13 @@ const callApi = async () => {
   }
 
   errorMessage.value = null; // Clear error before API call
+
+  // Start the loading spinner
+  const loadingInstance = ElLoading.service({
+    lock: true,
+    text: 'Loading...',
+    background: 'rgba(0, 0, 0, 0.7)',
+  });
 
   try {
     const response = await axios.get('http://localhost:8080/api/parameter/filter-by-body', {
@@ -33,31 +41,27 @@ const callApi = async () => {
     });
     console.log('API response:', response.data);
 
-    // Use Pinia store action to save each nutrient
-
-    // nutrientStore.setSumCalories(response.data.sumCalories); // or use SumCalories if that's the correct field
-    // nutrientStore.setSumProteins(response.data.sumProteins);
-    // nutrientStore.setSumFibers(response.data.sumFibers);
-    // nutrientStore.setSumFats(response.data.sumFats);
-    // nutrientStore.setSumSatFats(response.data.sumSatFats);
-    // nutrientStore.setSumCarbs(response.data.sumCarbs);
+    // Simulate storing data in a Pinia store (example)
+    // nutrientStore.setSumCalories(response.data.sumCalories);
 
     emit('showPopup', { response: response.data }); // Emit response data
 
   } catch (error) {
     console.error('API call error:', error);
     errorMessage.value = 'Error calling API. Please try again.';
+  } finally {
+    // Stop the loading spinner
+    loadingInstance.close();
   }
 };
 
 const carousel = ref(null);
-
 </script>
 
 <template>
   <div class="form-container">
     <el-row :gutter="20">
-      <!-- Cột Input -->
+      <!-- Input Column -->
       <el-col :span="12">
         <table class="form-table">
           <tr>
@@ -107,49 +111,38 @@ const carousel = ref(null);
         </table>
         <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
       </el-col>
-      <!-- Cột Carousel Iframe -->
+      <!-- Carousel Column -->
       <el-col :span="12" style="background: linear-gradient(to right, #ffffff, #fb8d8d); border-radius: 15px; padding: 20px;">
-
-      <el-carousel ref="carousel" indicator-position="outside" height="700px"  >
-          <el-carousel-item class="carousel-item" >
+        <el-carousel ref="carousel" indicator-position="outside" height="700px">
+          <el-carousel-item class="carousel-item">
             <div>
               <iframe src="https://giphy.com/embed/wq5bm6y4do9mbDF8zp" width="480" height="480" style="pointer-events: none;" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
             </div>
-            <b>
-              YOUR WEIGHT IS A POTENTIAL KEY FOR ME
-            </b>
+            <b>YOUR WEIGHT IS A POTENTIAL KEY FOR ME</b>
           </el-carousel-item>
           <el-carousel-item class="carousel-item">
             <div>
               <iframe src="https://giphy.com/embed/8lakloarUFVa9V4zOf" width="480" height="480" style="pointer-events: none;" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
             </div>
-            <b>
-              MAKE YOUR HEIGHT BE TRUE .....
-            </b>
+            <b>MAKE YOUR HEIGHT BE TRUE .....</b>
           </el-carousel-item>
           <el-carousel-item class="carousel-item">
             <div>
               <iframe src="https://giphy.com/embed/6MC7g5hFqQyqa337pU" width="480" height="480" style="pointer-events: none;" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
             </div>
-            <b>
-              YOUR AGE IS NECESSARY
-            </b>
+            <b>YOUR AGE IS NECESSARY</b>
           </el-carousel-item>
           <el-carousel-item class="carousel-item">
             <div>
               <iframe src="https://giphy.com/embed/vykq7hCWyub8dU8UFg" width="417" height="480" style="pointer-events: none;" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
             </div>
-            <b>
-              AND YOUR GENDER...
-            </b>
+            <b>AND YOUR GENDER...</b>
           </el-carousel-item>
           <el-carousel-item class="carousel-item">
             <div>
               <iframe src="https://giphy.com/embed/Vd2vmmSOEZzZQWXnxP" width="480" height="480" style="pointer-events: none;" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
             </div>
-            <b>
-              HOW OFTEN DO YOU DO EXERCISE?
-            </b>
+            <b>HOW OFTEN DO YOU DO EXERCISE?</b>
           </el-carousel-item>
         </el-carousel>
       </el-col>
@@ -186,7 +179,7 @@ const carousel = ref(null);
   background-color: #b1527a;
 }
 
-.carousel-item{
+.carousel-item {
   display: flex;
   font-family: "Gill Sans MT";
   font-size: 64px;

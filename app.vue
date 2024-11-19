@@ -32,5 +32,32 @@
   width: 100%;
 }
 </style>
-<script setup lang="ts">
+<script lang="ts" setup>
+import { ElLoading } from 'element-plus';
+import { useRouter } from 'vue-router';
+
+let loadingInstance: ReturnType<typeof ElLoading.service> | null = null;
+
+const router = useRouter();
+
+router.beforeEach((to, from, next) => {
+  // Start loading spinner before navigation
+  loadingInstance = ElLoading.service({
+    lock: true,
+    text: 'Loading...',
+    background: 'rgb(255,255,255)',
+  });
+
+  next(); // Allow navigation to proceed
+});
+
+router.afterEach(() => {
+  // Stop loading spinner after navigation is complete
+  setTimeout(() => {
+    if (loadingInstance) {
+      loadingInstance.close();
+      loadingInstance = null;
+    }
+  }, 1000); // Ensures the loading lasts at least 2 seconds
+});
 </script>

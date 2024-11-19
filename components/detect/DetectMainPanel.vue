@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import {ref, computed} from 'vue';
-import {ElMessage} from 'element-plus';
+import {ElLoading, ElMessage} from 'element-plus';
 import {Check, Plus, Close, WarningFilled} from '@element-plus/icons-vue';
 import axios from 'axios';
 import type {UploadProps} from 'element-plus';
@@ -26,6 +26,24 @@ const carbs = ref<number>(0)
 const fats = ref<number>(0)
 const satFats = ref<number>(0)
 const gram = ref<number>(100)
+
+const isLoading = ref(false); // Reactive loading state
+let loadingInstance: ReturnType<typeof ElLoading.service> | null = null;
+
+// Watch for changes to isLoading
+watch(isLoading, (newVal) => {
+  if (newVal) {
+    loadingInstance = ElLoading.service({
+      lock: true,
+      text: 'Loading',
+      background: 'rgba(0, 0, 0, 0.7)',
+    });
+  } else if (loadingInstance) {
+    loadingInstance.close();
+    loadingInstance = null;
+  }
+});
+
 const callApi = async (calories: number, proteins: number, carbs: number, fibers: number, fats: number, satFats: number) => {
   try {
     const response = await axios.get('http://localhost:8080/api/parameter/filter', {
@@ -59,6 +77,8 @@ const analyzeImage = async () => {
   formData.append('image', uploadedFile.value);
 
   try {
+    isLoading.value = true; // Start loading
+
     const response = await axios.post<FoodAnalysisResponse>('http://localhost:5000/api/analyze', formData, {
       headers: {'Content-Type': 'multipart/form-data'},
     });
@@ -76,30 +96,9 @@ const analyzeImage = async () => {
     fats.value = nutrition.fat_100g / 100 * gram.value ?? 0;
     satFats.value = 0;
 
-
     // Check if the API and store data are consistent
     if (calories.value !== 0 && nutrientStore.getSumCalories !== 0) {
-      isDetectedNutrients.value = false
-      // console.log('Valid data in nutrient store:', nutrientStore.getSumCalories);
-
-      console.log('Nutrient Store Data:', {
-        sumCalories: nutrientStore.getSumCalories,
-        sumProteins: nutrientStore.getSumProteins,
-        sumCarbs: nutrientStore.getSumCarbs,
-        sumFibers: nutrientStore.getSumFibers,
-        sumFats: nutrientStore.getSumFats,
-        sumSatFats: nutrientStore.getSumSatFats,
-      });
-
-      // Log all properties from the nutrition object
-      console.log('Nutrition Data from API:', {
-        calories_100g: nutrition.calories_100g,
-        proteins_100g: nutrition.proteins_100g,
-        carbs_100g: nutrition.carbs_100g,
-        fibers_100g: nutrition.fibers_100g,
-        fat_100g: nutrition.fat_100g,
-        sat_fat_100g: nutrition.sat_fat_100g,
-      });
+      isDetectedNutrients.value = false;
 
       const differences = {
         caloriesDiff: (nutrientStore.getSumCalories ?? 0) - (calories.value ?? 0),
@@ -110,8 +109,6 @@ const analyzeImage = async () => {
         satFatsDiff: (nutrientStore.getSumSatFats ?? 0) - (satFats.value ?? 0),
       };
 
-      console.log('Differences between Nutrient Store and Nutrition:', differences);
-
       await callApi(
           differences.caloriesDiff,
           differences.proteinsDiff,
@@ -121,12 +118,14 @@ const analyzeImage = async () => {
           differences.satFatsDiff
       );
     } else {
-      isPopupVisible.value = false
-      isDetectedNutrients.value = true
+      isPopupVisible.value = false;
+      isDetectedNutrients.value = true;
     }
   } catch (error) {
     ElMessage.error('Failed to analyze image.');
     console.error('Error during image analysis:', error);
+  } finally {
+    isLoading.value = false; // Stop loading
   }
 };
 

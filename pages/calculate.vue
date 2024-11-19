@@ -4,6 +4,7 @@ import Background from "~/components/icons/Background.vue";
 import AboutPanel from "~/components/main/AboutPanel.vue";
 import ContactPanel from "~/components/main/ContactPanel.vue";
 import CalculateMainPanel from "~/components/calculate/CalculateMainPanel.vue";
+
 </script>
 
 <template>
