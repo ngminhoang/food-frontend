@@ -1,6 +1,6 @@
 <template>
   <ul
-      v-infinite-scroll="load"
+      v-infinite-scroll="loadData"
       :infinite-scroll-disabled="loading"
       :infinite-scroll-distance="10"
       class="infinite-list"
@@ -61,11 +61,11 @@ watch(
       items.value = []             // Clear current items
       page.value = 1               // Reset to the first page
       totalPages.value = null      // Reset totalPages
-      load()                       // Load new data based on updated query, sort, or order
+      loadData()                       // Load new data based on updated query, sort, or order
     }
 )
 
-const load = async () => {
+const loadData = async () => {
   if (loading.value || (totalPages.value && page.value > totalPages.value)) return
 
   loading.value = true
@@ -107,7 +107,7 @@ const handleClick = (item) => {
 
 // Initial load on component mount
 onMounted(() => {
-  load()
+  loadData()
 })
 </script>
 
